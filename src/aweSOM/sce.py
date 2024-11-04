@@ -240,6 +240,41 @@ def parse_args():
 
     return parser.parse_args()
 
+def main(folder, subfolder, dims):
+    print("Starting SCE", flush=True)
+    os.chdir(folder)
+    cluster_files = glob.glob("*.npy")
+
+    # --------------------------------------------------
+    # data
+    print(cluster_files)
+
+    # --------------------------------------------------
+    # calculate unique number of clusters per run
+    nids_array = find_number_of_clusters(cluster_files)
+    print("nids_array:", nids_array, flush=True)
+    print("There are {} runs".format(len(cluster_files)), flush=True)
+    print("There are {} clusters in total".format(np.sum(nids_array)), flush=True)
+
+    # --------------------------------------------------
+    # generate index for multimap_mapping as the loop runs. Avoid declaring a dict beforehand to avoid memory leaks
+
+    try:  # try to create subfolder, if it exists, pass
+        os.mkdir(subfolder)
+    except FileExistsError:
+        pass
+
+    with open(subfolder + "/multimap_mappings.txt", "w") as f:
+        f.write("")
+
+    # --------------------------------------------------
+    # make shape of the data
+    data_dims = np.array(dims)
+
+    # --------------------------------------------------
+    # loop over data files reading image by image and do pairwise comparisons
+    # all wrapped inside the loop_over_all_clusters function, which uses JAX for fast computation
+    loop_over_all_clusters(cluster_files, nids_array, data_dims, subfolder)
 
 if __name__ == "__main__":
 
