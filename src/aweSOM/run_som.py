@@ -8,7 +8,7 @@ from sklearn.preprocessing import MinMaxScaler
 import numpy as np
 
 import pickle
-
+from pathlib import Path
 
 def batch_separator(data: np.ndarray, number_of_batches: int) -> np.ndarray:
     """Given a dataset and a number of batches, return a list of datasets
@@ -87,6 +87,7 @@ def save_som_object(
     batch: int = 1,
     initial: str = "s",
     name_of_dataset: str = "",
+    direct = './',
 ):
     """
     Save the SOM object to a pickle file.
@@ -103,7 +104,7 @@ def save_som_object(
     """
 
     with open(
-        f"som_object.{name_of_dataset}-{xdim}-{ydim}-{alpha_0}-{train}-{batch}{initial}.pkl",
+        direct + "/" +f"som_object.{name_of_dataset}-{xdim}-{ydim}-{alpha_0}-{train}-{batch}{initial}.pkl",
         "wb",
     ) as file:
         pickle.dump(som, file)
@@ -121,6 +122,7 @@ def save_cluster_labels(
     batch: int = 1,
     initial: str = "s",
     name_of_dataset: str = "",
+    direct = './',
 ):
     """
     Saves the cluster labels to a numpy file.
@@ -137,7 +139,7 @@ def save_cluster_labels(
     """
 
     np.save(
-        f"labels.{name_of_dataset}-{xdim}-{ydim}-{alpha_0}-{train}-{batch}{initial}.npy",
+        direct + "/"+f"labels.{name_of_dataset}-{xdim}-{ydim}-{alpha_0}-{train}-{batch}{initial}.npy",
         som_labels,
     )
     print(
